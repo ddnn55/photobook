@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
 
+const chapterHtml = require('./chapter_html');
+
 const photochapter = (sourceDirectory, options) => {
     options = options || {};
 
@@ -19,12 +21,25 @@ const photochapter = (sourceDirectory, options) => {
         if (!options.dryRun) {
             const port = 3000;
             const app = express();
-            app.get('/', (req, res) => res.send('Hello World!'));
+            app.get('/', (req, res) => {
+
+                fs.readdir(sourceDirectory, (err, imagePaths) => {
+                    if(err) {
+                        reject(`Could not list files in directory ${sourceDirectory}`);
+                    }
+                    else {
+                        const imageFilenames = imagePaths.map(
+                            imagePath => path.parse(imagePath).name
+                        );
+                        res.send(chapterHtml(imageFilenames));
+                    }
+                });
+
+            });
 
             const httpServer = require('http').createServer(app);
             httpServer.listen({ port }, () => {
-                console.log('server listening!?');
-                console.log('Example app listening on port 3000!');
+                console.log('listening on port 3000!');
 
                 const electronPdf = child_process.spawn(
                     path.join(__dirname, '../node_modules/electron-pdf/cli.js'),
@@ -57,6 +72,34 @@ const photochapter = (sourceDirectory, options) => {
     });
 };
 
+const makeChapterIfDirectory = (chapterDirFullPath, options) => {
+    return new Promise((resolve, reject) => {
+        fs.lstat(chapterDirFullPath, (err, stats) => {
+            
+            if(err) {
+                reject(`Could not test if ${chapterDirFullPath} is a directory`);
+            }
+            else {
+                if(stats.isDirectory()) {
+                    console.log('calling photochapter with ', chapterDirFullPath);
+                    photochapter(chapterDirFullPath, options).then(() => {
+                        console.error('photochapter() resolved');
+                        resolve();
+                    }).catch(err => {
+                        console.error('photochapter() errored', err);
+                        reject(`Something went wrong while trying to make chapter for ${chapterDirFullPath}`);
+                    });
+                }
+                else {
+                    resolve();
+                }
+            }
+            
+        });
+        
+    });
+};
+
 module.exports = function (sourceDirectory, options) {
     options = options || {};
 
@@ -68,26 +111,28 @@ module.exports = function (sourceDirectory, options) {
             }
             else {
                 (async function makeChapters() {
+                    // console.log({chapterDirs});
                     for (const chapterDir of chapterDirs) {
-                        await photochapter(chapterDir, options);
+                        try {
+                            console.log({chapterDir});
+                            const chapterDirFullPath = path.join(sourceDirectory, chapterDir);
+                            
+                            await makeChapterIfDirectory(chapterDirFullPath, options);
+
+                        }
+                        catch(e) {
+                            reject(`Something went wrong while trying to make chapter for ${chapterDir}`);
+                        }
                     }
+                    console.error('after the loop');
                 })().then(() => {
+                    console.error('there');
                     resolve();
+                })
+                .catch(err => {
+                    console.error('here', err);
                 });
 
-
-                // chapterDirs.forEach(chapterDir => {
-                //     try {
-                //         await photochapter(chapterDir);
-                //     }
-                //     catch(e) {
-                //         reject(e);
-                //     }
-                // });
-
-                // resolve();
-
-                // return Promise.all(chapterDirs.map(photochapter));
             }
         });
 
