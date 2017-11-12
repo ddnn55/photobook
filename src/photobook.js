@@ -56,7 +56,7 @@ const photochapter = (sourceDirectory, options) => {
                 ];
                 if(options.pageSize) {
                     args = args.concat([
-                        '--page-size',
+                        `--pageSize`,
                         options.pageSize
                     ]);
                 }
