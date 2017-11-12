@@ -9,26 +9,33 @@ const getCss = new Promise((resolve, reject) => {
             reject('Could not read styles.css');
         }
         else {
-            console.error('got styles.css');
+            // console.error('got styles.css');
             resolve(data);
         }
     });
 });
 
 module.exports = (images, options) => {
-    console.error(options.pageSize);
-    const rects = layOutPage(images, options.pageSize);
-    console.error('after layOutPage', rects);
+    // console.error(options.pageSize);
+    const placedImages = layOutPage(images, options.pageSize);
+    // console.error('after layOutPage', placedImages);
 
     return new Promise((resolve, reject) => {
         getCss.then(css => {
             resolve(`
                 <style>${css}</style>
-                ${images.map(image => {
-                    const imageUrl = `static/${image.filename}`;
+                ${placedImages.map((placedImage, i) => {
+                    const imageUrl = `static/${placedImage.image.filename}`;
                     return `
-                        <img class="photo" src="${imageUrl}"/>
-                        ${image.metadata.width} x ${image.metadata.height}
+                        <img class="photo" src="${imageUrl}"
+                            style="
+                                left: ${placedImage.placement.x}mm;
+                                top: ${placedImage.placement.y}mm;
+                                width: ${placedImage.placement.w}mm;
+                                height: ${placedImage.placement.h}mm;
+                            "
+                        />
+                        ${placedImage.image.metadata.width} x ${placedImage.image.metadata.height}
                     `;
                 }).join('\n')}
             `);

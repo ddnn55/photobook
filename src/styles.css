@@ -4,8 +4,7 @@ body {
 }
 
 .photo {
-    display: inline-block;
-    float: left;
+    position: absolute;
     margin: 0;
     padding: 0;
     border: 0;
