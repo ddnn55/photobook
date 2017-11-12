@@ -10,7 +10,7 @@ photobook(argv.inputDirectory, {dryRun: argv.dryRun}).then((err, result) => {
         process.exit(1);
     }
     else {
-        console.log(result);
+        console.log('result: ', result);
     }
 })
 .catch(err => {

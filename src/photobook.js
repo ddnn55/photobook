@@ -8,10 +8,11 @@ const photochapter = (sourceDirectory, options) => {
 
     return new Promise((resolve, reject) => {
 
+        // console.log(path.parse(sourceDirectory));
+
         const outputFilePath = path.join(
             process.cwd(),
-            path.basename(sourceDirectory),
-            '.pdf'
+            path.parse(sourceDirectory).name + '.pdf'
         );
         console.log(outputFilePath);
 
