@@ -5,6 +5,9 @@ const child_process = require('child_process');
 
 const chapterHtml = require('./chapter_html');
 
+// should be more rigorous lol
+const isImage = filename => filename !== '.DS_Store';
+
 const photochapter = (sourceDirectory, options) => {
     options = options || {};
 
@@ -23,12 +26,12 @@ const photochapter = (sourceDirectory, options) => {
             const app = express();
             app.get('/', (req, res) => {
 
-                fs.readdir(sourceDirectory, (err, imagePaths) => {
+                fs.readdir(sourceDirectory, (err, possibleImagePaths) => {
                     if(err) {
                         reject(`Could not list files in directory ${sourceDirectory}`);
                     }
                     else {
-                        const imageFilenames = imagePaths.map(
+                        const imageFilenames = possibleImagePaths.filter(isImage).map(
                             imagePath => path.parse(imagePath).base
                         );
                         chapterHtml(imageFilenames).then(html => {
@@ -47,12 +50,19 @@ const photochapter = (sourceDirectory, options) => {
             httpServer.listen({ port }, () => {
                 console.log('listening on port 3000!');
 
+                let args = [
+                    `http://0.0.0.0:${port}/`,
+                    outputFilePath
+                ];
+                if(options.pageSize) {
+                    args = args.concat([
+                        '--page-size',
+                        options.pageSize
+                    ]);
+                }
                 const electronPdf = child_process.spawn(
                     path.join(__dirname, '../node_modules/electron-pdf/cli.js'),
-                    [
-                        `http://0.0.0.0:${port}/`,
-                        outputFilePath
-                    ]
+                    args
                 );
 
                 electronPdf.stdout.on('data', (data) => {
