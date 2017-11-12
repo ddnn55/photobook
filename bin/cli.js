@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 const photobook = require('../src/photobook');
+const argv = require('yargs').argv;
 
-photobook(process.cwd()).then((err, result) => {
+photobook(argv.inputDirectory, {dryRun: argv.dryRun}).then((err, result) => {
     if(err) {
         console.error('Photobook creation failed.');
         console.error(err);
