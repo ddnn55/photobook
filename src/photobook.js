@@ -12,9 +12,9 @@ const makeChapterIfDirectory = (chapterDirFullPath, options) => {
             }
             else {
                 if(stats.isDirectory()) {
-                    console.log('calling photochapter with ', chapterDirFullPath);
+                    // console.log('calling photochapter with ', chapterDirFullPath);
                     photochapter(chapterDirFullPath, options).then(() => {
-                        console.error('photochapter() resolved');
+                        // console.error('photochapter() resolved');
                         resolve();
                     }).catch(err => {
                         console.error(err);

@@ -3,7 +3,7 @@ var sum = require('lodash.sum');
 var range = require('lodash.range');
 
 const packWithScale = (images, pageSize, scale) => {
-    console.error(`trying scale ${scale}`);
+    // console.error(`trying scale ${scale}`);
     var rects = images.map(
         image => ({
             w: Math.floor(scale * image.metadata.width),
@@ -76,7 +76,7 @@ module.exports = (images, pageSize) => {
     // const max = Math.max.apply(Math, samples.map(sample => sample.portionAreaUsed));
     // console.error('BEST: ', max);
 
-    console.error(samples.map(sample => sample.portionAreaUsed));
+    // console.error(samples.map(sample => sample.portionAreaUsed));
 
     if(samples[0].placedImages.length !== images.length) {
         console.error('################### Could not pack all images on the page!');

@@ -79,7 +79,7 @@ module.exports = (sourceDirectory, options) => {
 
             const httpServer = require('http').createServer(app);
             httpServer.listen({ port }, () => {
-                console.log('listening on port 3000!');
+                // console.log('listening on port 3000!');
 
                 let args = [
                     `http://0.0.0.0:${port}/`,
@@ -97,7 +97,7 @@ module.exports = (sourceDirectory, options) => {
                 );
 
                 electronPdf.stdout.on('data', (data) => {
-                    console.log(`stdout: ${data}`);
+                    // console.log(`stdout: ${data}`);
                 });
 
                 electronPdf.stderr.on('data', (data) => {
@@ -105,7 +105,7 @@ module.exports = (sourceDirectory, options) => {
                 });
 
                 electronPdf.on('close', (code) => {
-                    console.log(`child process exited with code ${code}`);
+                    // console.log(`child process exited with code ${code}`);
                     httpServer.close();
                     resolve(outputFilePath);
                 });
