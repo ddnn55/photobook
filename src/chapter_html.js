@@ -16,6 +16,20 @@ const getCss = new Promise((resolve, reject) => {
     });
 });
 
+const renderPage = page => page.map((placedImage, i) => {
+    const imageUrl = `static/${placedImage.image.filename}`;
+    return `
+        <img class="photo" src="${imageUrl}"
+            style="
+                left: ${placedImage.placement.x}mm;
+                top: ${placedImage.placement.y}mm;
+                width: ${placedImage.placement.w}mm;
+                height: ${placedImage.placement.h}mm;
+            "
+        />
+    `;
+}).join('\n');
+
 module.exports = (images, options) => {
     // console.error(options.pageSize);
     
@@ -26,10 +40,11 @@ module.exports = (images, options) => {
             images.slice(first),
             options.pageSize
         );
-        console.error(`total: ${images.length}`);
         pages.push(placed);
     }
 
+
+    console.error(`total: ${images.length}`);
     console.error('pages: ', pages.map(page => page.length));
 
     // console.error('after layOutPage', placedImages);
@@ -38,20 +53,14 @@ module.exports = (images, options) => {
         getCss.then(css => {
             resolve(`
                 <style>${css}</style>
-                ${pages[0].map((placedImage, i) => {
-                    const imageUrl = `static/${placedImage.image.filename}`;
-                    return `
-                        <img class="photo" src="${imageUrl}"
-                            style="
-                                left: ${placedImage.placement.x}mm;
-                                top: ${placedImage.placement.y}mm;
-                                width: ${placedImage.placement.w}mm;
-                                height: ${placedImage.placement.h}mm;
-                            "
-                        />
-                        ${placedImage.image.metadata.width} x ${placedImage.image.metadata.height}
-                    `;
-                }).join('\n')}
+                ${pages.map(page => `
+                    <div class="page" style="
+                        width: ${options.pageSize[0]}mm;
+                        height: ${options.pageSize[1]}mm;
+                    ">
+                        ${renderPage(page)}
+                    </div>
+                `)}
             `);
         }).catch(err => {
             reject(err);

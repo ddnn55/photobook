@@ -3,6 +3,10 @@ body {
     padding: 0;
 }
 
+.page {
+    position: relative;
+}
+
 .photo {
     position: absolute;
     margin: 0;
