@@ -1,3 +1,9 @@
 module.exports = imageFilenames => {
-    return imageFilenames.join('<br/>');
+    return imageFilenames.map(imageFilename => {
+        const imageUrl = `static/${imageFilename}`;
+        return `
+            <img src="${imageUrl}"/><br/>
+            ${imageUrl}
+        `;
+    }).join('<br/>');
 };

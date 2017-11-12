@@ -29,13 +29,14 @@ const photochapter = (sourceDirectory, options) => {
                     }
                     else {
                         const imageFilenames = imagePaths.map(
-                            imagePath => path.parse(imagePath).name
+                            imagePath => path.parse(imagePath).base
                         );
                         res.send(chapterHtml(imageFilenames));
                     }
                 });
 
             });
+            app.use('/static', express.static(sourceDirectory));
 
             const httpServer = require('http').createServer(app);
             httpServer.listen({ port }, () => {
@@ -86,8 +87,8 @@ const makeChapterIfDirectory = (chapterDirFullPath, options) => {
                         console.error('photochapter() resolved');
                         resolve();
                     }).catch(err => {
-                        console.error('photochapter() errored', err);
-                        reject(`Something went wrong while trying to make chapter for ${chapterDirFullPath}`);
+                        console.error(err);
+                        reject(`Could not make chapter for ${chapterDirFullPath}`);
                     });
                 }
                 else {
@@ -114,7 +115,6 @@ module.exports = function (sourceDirectory, options) {
                     // console.log({chapterDirs});
                     for (const chapterDir of chapterDirs) {
                         try {
-                            console.log({chapterDir});
                             const chapterDirFullPath = path.join(sourceDirectory, chapterDir);
                             
                             await makeChapterIfDirectory(chapterDirFullPath, options);
