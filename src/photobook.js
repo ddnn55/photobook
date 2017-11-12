@@ -33,6 +33,7 @@ const makeChapterIfDirectory = (chapterDirFullPath, options) => {
 
 module.exports = function (sourceDirectory, options) {
     options = options || {};
+    options.pageSize = options.pageSize || 'A4';
 
     return new Promise((resolve, reject) => {
 

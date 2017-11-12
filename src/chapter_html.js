@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const layOutPage = require('./lay_out_page');
+
 const getCss = new Promise((resolve, reject) => {
     fs.readFile(path.join(__dirname, 'styles.css'), { encoding: 'utf8' }, (err, data) => {
         if (err) {
@@ -13,7 +15,11 @@ const getCss = new Promise((resolve, reject) => {
     });
 });
 
-module.exports = images => {
+module.exports = (images, options) => {
+    console.error(options.pageSize);
+    const rects = layOutPage(images, options.pageSize);
+    console.error('after layOutPage', rects);
+
     return new Promise((resolve, reject) => {
         getCss.then(css => {
             resolve(`

@@ -769,6 +769,10 @@ locate-path@^2.0.0:
     p-locate "^2.0.0"
     path-exists "^3.0.0"
 
+lodash.sum@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/lodash.sum/-/lodash.sum-4.0.2.tgz#ad90e397965d803d4f1ff7aa5b2d0197f3b4637b"
+
 lodash@^4.14.0, lodash@^4.16.2:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
@@ -892,7 +896,7 @@ ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
 
-nan@^2.6.2:
+nan@^2.4.0, nan@^2.6.2:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.7.0.tgz#d95bf721ec877e08db276ed3fc6eb78f9083ad46"
 
@@ -983,6 +987,10 @@ p-locate@^2.0.0:
   resolved "https://registry.yarnpkg.com/p-locate/-/p-locate-2.0.0.tgz#20a0103b222a70c8fd39cc2e580680f3dde5ec43"
   dependencies:
     p-limit "^1.1.0"
+
+paper-size@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/paper-size/-/paper-size-1.1.0.tgz#5b1f5214de69e1f1ec2add60f787f20666583194"
 
 parse-json@^2.2.0:
   version "2.2.0"
@@ -1148,6 +1156,12 @@ readable-stream@~1.1.9:
     inherits "~2.0.1"
     isarray "0.0.1"
     string_decoder "~0.10.x"
+
+"rectangle-bin-pack@git+https://github.com/gimlids/rectangle-bin-pack#b4d4c6a2766eea965eff8bbf3a878dc802ff453c":
+  version "0.3.4"
+  resolved "git+https://github.com/gimlids/rectangle-bin-pack#b4d4c6a2766eea965eff8bbf3a878dc802ff453c"
+  dependencies:
+    nan "^2.4.0"
 
 redent@^1.0.0:
   version "1.0.0"

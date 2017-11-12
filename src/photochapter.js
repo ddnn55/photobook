@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const sharp = require('sharp');
+var paperSize = require('paper-size');
 
 const chapterHtml = require('./chapter_html');
 
@@ -56,7 +57,14 @@ module.exports = (sourceDirectory, options) => {
                                 })
                             );
                         })
-                        .then(chapterHtml)
+                        .then(
+                            images => chapterHtml(images, {
+                                pageSize: paperSize.getSize(
+                                    options.pageSize.toLowerCase(),
+                                    { unit: 'mm' }
+                                )
+                            })
+                        )
                         .then(html => {
                             res.send(html);
                         }).catch(err => {
