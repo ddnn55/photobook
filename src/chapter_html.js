@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const flatten = require('lodash.flatten');
 
 const layOutPage = require('./lay_out_page');
 
@@ -17,14 +18,27 @@ const getCss = new Promise((resolve, reject) => {
 
 module.exports = (images, options) => {
     // console.error(options.pageSize);
-    const placedImages = layOutPage(images, options.pageSize);
+    
+    const pages = [];
+
+    for(var first = 0; first < images.length; first = flatten(pages).length) {
+        const { placed, unplaced } = layOutPage(
+            images.slice(first),
+            options.pageSize
+        );
+        console.error(`total: ${images.length}`);
+        pages.push(placed);
+    }
+
+    console.error('pages: ', pages.map(page => page.length));
+
     // console.error('after layOutPage', placedImages);
 
     return new Promise((resolve, reject) => {
         getCss.then(css => {
             resolve(`
                 <style>${css}</style>
-                ${placedImages.map((placedImage, i) => {
+                ${pages[0].map((placedImage, i) => {
                     const imageUrl = `static/${placedImage.image.filename}`;
                     return `
                         <img class="photo" src="${imageUrl}"

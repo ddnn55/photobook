@@ -23,20 +23,27 @@ const packWithScale = (images, pageSize, scale) => {
         },
         rects
     );
-    const placedImages = rects
+    const imagesSomePlaced = rects
     .map((rect, r) => ({
         image: images[r],
         placement: rect
-    }))
+    }));
+
+    const placedImages = imagesSomePlaced
     .filter(
         placedImage => placedImage.placement.hasOwnProperty('x') && placedImage.placement.hasOwnProperty('y')
+    );
+
+    const unplacedImages = imagesSomePlaced
+    .filter(
+        placedImage => !placedImage.placement.hasOwnProperty('x') || !placedImage.placement.hasOwnProperty('y')
     );
 
     const portionAreaUsed = sum(placedImages.map(
         placedImage => placedImage.placement.w * placedImage.placement.h
     )) / (pageSize[0] * pageSize[1]);
 
-    return {portionAreaUsed, placedImages};
+    return {portionAreaUsed, placedImages, unplacedImages};
 };
 
 module.exports = (images, pageSize) => {
@@ -78,11 +85,16 @@ module.exports = (images, pageSize) => {
 
     // console.error(samples.map(sample => sample.portionAreaUsed));
 
-    if(samples[0].placedImages.length !== images.length) {
-        console.error('################### Could not pack all images on the page!');
+    const mostEfficientLayout = samples[samples.length-1];
+
+    if(mostEfficientLayout.placedImages.length !== images.length) {
+        // console.error('################### Could not pack all images on the page!');
     }
 
     // else {
-        return samples[samples.length-1].placedImages;
+        return {
+            placed: mostEfficientLayout.placedImages,
+            unplaced: mostEfficientLayout.unplacedImages
+        };
     // }
 };

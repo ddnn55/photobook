@@ -12,6 +12,7 @@
   "dependencies": {
     "electron-pdf": "^1.2.2",
     "express": "^4.16.2",
+    "lodash.flatten": "^4.4.0",
     "lodash.range": "^3.2.0",
     "lodash.sum": "^4.0.2",
     "paper-size": "^1.1.0",
