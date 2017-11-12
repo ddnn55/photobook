@@ -1,0 +1,16 @@
+{
+  "name": "photobook",
+  "bin": {
+    "photobook": "bin/cli.js"
+  },
+  "version": "1.0.0",
+  "description": "Make PDF photo albums",
+  "main": "src/photobook.js",
+  "repository": "https://www.github.com/gimlids/photobook",
+  "author": "David Stolarsky",
+  "license": "MIT",
+  "dependencies": {
+    "electron-pdf": "^1.2.2",
+    "express": "^4.16.2"
+  }
+}
