@@ -31,7 +31,12 @@ const photochapter = (sourceDirectory, options) => {
                         const imageFilenames = imagePaths.map(
                             imagePath => path.parse(imagePath).base
                         );
-                        res.send(chapterHtml(imageFilenames));
+                        chapterHtml(imageFilenames).then(html => {
+                            res.send(html);
+                        }).catch(err => {
+                            reject(err);
+                        });
+                        
                     }
                 });
 
