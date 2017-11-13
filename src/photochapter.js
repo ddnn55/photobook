@@ -58,7 +58,8 @@ module.exports = (sourceDirectory, options) => {
                         })
                         .then(
                             images => chapterHtml(images, {
-                                pageSize: options.pageSize.dimensions
+                                pageSize: options.pageSize.dimensions,
+                                targetPhotosPerPage: options.targetPhotosPerPage
                             })
                         )
                         .then(html => {
