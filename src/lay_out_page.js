@@ -46,9 +46,9 @@ const packWithScale = (images, pageSize, scale) => {
     return {portionAreaUsed, placedImages, unplacedImages};
 };
 
-module.exports = (images, pageSize, targetPhotosPerPage) => {
-
-    console.error("Start lay_out_page. ", targetPhotosPerPage);
+const rectangleBinPackStrategy = (images, pageSize, targetPhotosPerPage) => {
+    
+    console.error("Start rectangleBinPackStrategy. ", targetPhotosPerPage);
 
     const targetPhotosPixelArea = sum(images.slice(0, targetPhotosPerPage).map(
         image => image.metadata.width * image.metadata.height
@@ -99,10 +99,71 @@ module.exports = (images, pageSize, targetPhotosPerPage) => {
         // console.error('################### Could not pack all images on the page!');
     }
 
+    mostEfficientLayout.placedImages.forEach(placedImage => {
+        if(placedImage.placement.x + placedImage.placement.w > pageSize[0] ||
+            placedImage.placement.y + placedImage.placement.h > pageSize[1]) {
+            console.error('wtf ', placedImage.placement);
+        }
+    });
+
     // else {
         return {
             placed: mostEfficientLayout.placedImages,
             unplaced: mostEfficientLayout.unplacedImages
         };
     // }
+};
+    
+const rowPackStrategy = (images, pageSize) => {
+
+    let placedImages = [];
+    let unplacedImages = images;
+
+    for(
+        var bottom = 0;
+        bottom < pageSize[1] && placedImages.length < images.length;
+        bottom = placedImages[placedImages.length-1].bottom()
+    ) {
+        const nextRowImages = unplacedImages.slice(0, 2);
+        const rowAspectRatio = sum(nextRowImages.map(
+            nextRowImage => nextRowImage.metadata.width / nextRowImage.metadata.height
+        ));
+        let rowHeight = pageSize[0] / rowAspectRatio;
+        if(bottom === 0 && rowHeight > pageSize[1]) {
+            rowHeight = pageSize[1];
+        }
+        if(bottom + rowHeight > pageSize[1]) {
+            break;
+        }
+        else {
+            unplacedImages.splice(0, 2);
+        }
+        let x = 0;
+        nextRowImages.forEach(
+            nextRowImage => {
+                const width = rowHeight * nextRowImage.metadata.width / nextRowImage.metadata.height;
+                const imageBottom = bottom + rowHeight;
+                placedImages.push({
+                    image: nextRowImage,
+                    placement: {
+                        x: x,
+                        y: bottom,
+                        w: width,
+                        h: rowHeight
+                    },
+                    bottom: () => imageBottom
+                });
+                x += width;
+            }
+        );
+    }
+
+    return {
+        placed: placedImages
+    };
+}
+
+module.exports = (images, pageSize, targetPhotosPerPage) => {
+    return rowPackStrategy(images, pageSize);
+    // return rectangleBinPackStrategy(images, pageSize, targetPhotosPerPage);
 };

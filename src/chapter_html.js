@@ -36,7 +36,7 @@ module.exports = (images, options) => {
     const pages = [];
 
     for(var first = 0; first < images.length; first = flatten(pages).length) {
-        const { placed, unplaced } = layOutPage(
+        const { placed } = layOutPage(
             images.slice(first),
             options.pageSize,
             options.targetPhotosPerPage || images.length
