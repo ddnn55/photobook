@@ -5,7 +5,8 @@ const argv = require('yargs').argv;
 
 photobook(argv.inputDirectory, {
     dryRun: argv.dryRun,
-    pageSize: argv.pageSize
+    pageSize: argv.pageSize,
+    targetPhotosPerPage: parseInt(argv.targetPhotosPerPage)
 }).then((err, result) => {
     if(err) {
         console.error('Photobook creation failed.');

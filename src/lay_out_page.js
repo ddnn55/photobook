@@ -51,12 +51,6 @@ module.exports = (images, pageSize) => {
         image => image.metadata.width * image.metadata.height
     ));
     const pageMmArea = pageSize[0] * pageSize[1];
-    const maxScale = Math.sqrt(pageMmArea / totalImagePixelArea);
-    
-    // TBD
-    const scale = maxScale;
-
-    // console.error({maxScale});
 
     const sampleCount = 100;
     const lowTargetScale = Math.sqrt(0.3 * pageMmArea / totalImagePixelArea);
