@@ -44,7 +44,7 @@ module.exports = function (sourceDirectory, options) {
         )
     };
 
-    console.error(`Page Size (${options.pageSize.name}): ${options.pageSize.dimensions}`);
+    console.error(`Page Size (${options.pageSize.name}): ${options.pageSize.dimensions[0]}mm x ${options.pageSize.dimensions[1]}mm`);
 
     return new Promise((resolve, reject) => {
 
