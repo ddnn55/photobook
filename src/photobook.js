@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+var paperSize = require('paper-size');
 
 const photochapter = require('./photochapter');
 
@@ -33,7 +34,17 @@ const makeChapterIfDirectory = (chapterDirFullPath, options) => {
 
 module.exports = function (sourceDirectory, options) {
     options = options || {};
+    
     options.pageSize = options.pageSize || 'A4';
+    options.pageSize = {
+        name: options.pageSize,
+        dimensions: paperSize.getSize(
+            options.pageSize.toLowerCase(),
+            { unit: 'mm' }
+        )
+    };
+
+    console.error(`Page Size (${options.pageSize.name}): ${options.pageSize.dimensions}`);
 
     return new Promise((resolve, reject) => {
 

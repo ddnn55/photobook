@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const sharp = require('sharp');
-var paperSize = require('paper-size');
 
 const chapterHtml = require('./chapter_html');
 
@@ -59,10 +58,7 @@ module.exports = (sourceDirectory, options) => {
                         })
                         .then(
                             images => chapterHtml(images, {
-                                pageSize: paperSize.getSize(
-                                    options.pageSize.toLowerCase(),
-                                    { unit: 'mm' }
-                                )
+                                pageSize: options.pageSize.dimensions
                             })
                         )
                         .then(html => {
@@ -88,7 +84,7 @@ module.exports = (sourceDirectory, options) => {
                 if(options.pageSize) {
                     args = args.concat([
                         `--pageSize`,
-                        options.pageSize
+                        options.pageSize.name
                     ]);
                 }
                 const electronPdf = child_process.spawn(
