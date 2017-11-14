@@ -117,14 +117,13 @@ const rectangleBinPackStrategy = (images, pageSize, targetPhotosPerPage) => {
 const rowPackStrategy = (images, pageSize) => {
 
     let placedImages = [];
-    let unplacedImages = images;
+    let nextIndex = 0;
+    var bottom = 0;
 
-    for(
-        var bottom = 0;
-        bottom < pageSize[1] && placedImages.length < images.length;
-        bottom = placedImages[placedImages.length-1].bottom()
+    while(
+        placedImages.length < images.length
     ) {
-        const nextRowImages = unplacedImages.slice(0, 2);
+        const nextRowImages = images.slice(nextIndex, nextIndex + 2);
         const rowAspectRatio = sum(nextRowImages.map(
             nextRowImage => nextRowImage.metadata.width / nextRowImage.metadata.height
         ));
@@ -133,10 +132,11 @@ const rowPackStrategy = (images, pageSize) => {
             rowHeight = pageSize[1];
         }
         if(bottom + rowHeight > pageSize[1]) {
+            // console.error(`rowAspectRatio is ${rowAspectRatio} bottom+rowHeight is ${bottom+rowHeight}, page height is ${pageSize[1]}`);
             break;
         }
         else {
-            unplacedImages.splice(0, 2);
+            nextIndex += 2;
         }
         let x = 0;
         nextRowImages.forEach(
@@ -156,6 +156,12 @@ const rowPackStrategy = (images, pageSize) => {
                 x += width;
             }
         );
+
+        bottom += rowHeight;
+        if(bottom > pageSize[1]) {
+            // console.error(`bottom is ${bottom}, page height is ${pageSize[1]}`);
+            break;
+        }
     }
 
     return {

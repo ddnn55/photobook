@@ -10,14 +10,21 @@ const chapterHtml = require('./chapter_html');
 const isImage = filename => filename !== '.DS_Store';
 
 const getImagesMetadatas = imagePaths => Promise.all(
-    imagePaths.map(imagePath =>
+    imagePaths.map(imagePath => new Promise((resolve, reject) => {
         sharp(imagePath)
             .metadata()
             .then(function (metadata) {
-                return metadata;
+                resolve(metadata);
             })
-    )
-);
+            .catch(err => {
+                console.error(`Skipping ${imagePath}: could not read its image metadata`);
+                resolve(null);
+            })
+    }))
+)
+.then(imageMetadatasAndNulls => imageMetadatasAndNulls.filter(
+    metadataOrNull => metadataOrNull !== null
+));
 
 module.exports = (sourceDirectory, options) => {
     options = options || {};
