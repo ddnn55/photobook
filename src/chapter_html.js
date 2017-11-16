@@ -32,13 +32,22 @@ const renderPage = page => page.map((placedImage, i) => {
 
 module.exports = (images, options) => {
     // console.error(options.pageSize);
-    
+
+    const layoutWidth = options.pageSize[0];
+    // fudge to keep pages from bleeding onto next page and
+    // gradually offsetting everything more and more with
+    // each new page :(
+    const layoutHeight = options.pageSize[1] * 0.98;
+
     const pages = [];
 
-    for(var first = 0; first < images.length; first = flatten(pages).length) {
+    for (var first = 0; first < images.length; first = flatten(pages).length) {
         const { placed } = layOutPage(
             images.slice(first),
-            options.pageSize,
+            [
+                layoutWidth,
+                layoutHeight
+            ],
             options.targetPhotosPerPage || images.length
         );
         pages.push(placed);
@@ -56,8 +65,8 @@ module.exports = (images, options) => {
                 <style>${css}</style>
                 ${pages.map(page => `
                     <div class="page" style="
-                        width: ${options.pageSize[0]}mm;
-                        height: ${options.pageSize[1]}mm;
+                        width: ${layoutWidth}mm;
+                        height: ${layoutHeight}mm;
                     ">
                         ${renderPage(page)}
                     </div>
