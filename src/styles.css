@@ -4,7 +4,7 @@ body {
 }
 
 .page {
-    /* page-break-before: always; */
+    page-break-before: always;
     position: relative;
     margin: 0;
     padding: 0;
