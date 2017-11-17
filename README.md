@@ -5,7 +5,7 @@ TODO
 ## Usage
 
 ```
-photobook --input-directory ~/Desktop/hide/ScanCafe_jpgs_only/ --page-size=A3
+photobook --input-directory path/to/folder/of/folders/of/photos --page-size=A3
 ```
 
 ## Additional Resources
