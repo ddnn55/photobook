@@ -174,12 +174,21 @@ const rowPackStrategy = (images, pageSize, maxTargetPhotosPerRow) => {
     };
 }
 
+const verticallyCenter = (pageLayout, pageSize) => {
+    const offset = (pageSize[1] - pageLayout.bottom) / 2;
+    pageLayout.placed.forEach(placedImage => {
+        placedImage.placement.y += offset;
+    });
+    pageLayout.bottom += offset;
+};
+
 module.exports = (images, pageSize, maxTargetPhotosPerRow = 3) => {
     const pageLayout = rowPackStrategy(images, pageSize, maxTargetPhotosPerRow);
     if(/*pageLayout.placed.length === images.length &&*/ pageLayout.bottom < 0.5 * pageSize[1] && maxTargetPhotosPerRow > 1) {
         return module.exports(images, pageSize, maxTargetPhotosPerRow - 1)
     }
     else {
+        verticallyCenter(pageLayout, pageSize);
         return pageLayout;
     }
     // return rectangleBinPackStrategy(images, pageSize, targetPhotosPerPage);
