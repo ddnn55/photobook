@@ -114,7 +114,7 @@ const rectangleBinPackStrategy = (images, pageSize, targetPhotosPerPage) => {
     // }
 };
     
-const rowPackStrategy = (images, pageSize) => {
+const rowPackStrategy = (images, pageSize, maxTargetPhotosPerRow) => {
 
     let placedImages = [];
     let nextIndex = 0;
@@ -123,7 +123,11 @@ const rowPackStrategy = (images, pageSize) => {
     while(
         placedImages.length < images.length
     ) {
-        const nextRowImages = images.slice(nextIndex, nextIndex + 2);
+        const targetNumberImagesNextRow = Math.max(1, [maxTargetPhotosPerRow - 1, maxTargetPhotosPerRow][
+            Math.floor(Math.random() * 2)
+        ]);
+
+        const nextRowImages = images.slice(nextIndex, nextIndex + targetNumberImagesNextRow);
         const rowAspectRatio = sum(nextRowImages.map(
             nextRowImage => nextRowImage.metadata.width / nextRowImage.metadata.height
         ));
@@ -136,7 +140,7 @@ const rowPackStrategy = (images, pageSize) => {
             break;
         }
         else {
-            nextIndex += 2;
+            nextIndex += targetNumberImagesNextRow;
         }
         let x = 0;
         nextRowImages.forEach(
@@ -158,18 +162,25 @@ const rowPackStrategy = (images, pageSize) => {
         );
 
         bottom += rowHeight;
-        if(bottom > pageSize[1]) {
-            // console.error(`bottom is ${bottom}, page height is ${pageSize[1]}`);
-            break;
-        }
+        // if(bottom > pageSize[1]) {
+        //     // console.error(`bottom is ${bottom}, page height is ${pageSize[1]}`);
+        //     break;
+        // }
     }
 
     return {
-        placed: placedImages
+        placed: placedImages,
+        bottom
     };
 }
 
-module.exports = (images, pageSize, targetPhotosPerPage) => {
-    return rowPackStrategy(images, pageSize);
+module.exports = (images, pageSize, maxTargetPhotosPerRow = 3) => {
+    const pageLayout = rowPackStrategy(images, pageSize, maxTargetPhotosPerRow);
+    if(/*pageLayout.placed.length === images.length &&*/ pageLayout.bottom < 0.5 * pageSize[1] && maxTargetPhotosPerRow > 1) {
+        return module.exports(images, pageSize, maxTargetPhotosPerRow - 1)
+    }
+    else {
+        return pageLayout;
+    }
     // return rectangleBinPackStrategy(images, pageSize, targetPhotosPerPage);
 };

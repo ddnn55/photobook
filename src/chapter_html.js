@@ -47,8 +47,7 @@ module.exports = (images, options) => {
             [
                 layoutWidth,
                 layoutHeight
-            ],
-            options.targetPhotosPerPage || images.length
+            ]
         );
         pages.push(placed);
     }
