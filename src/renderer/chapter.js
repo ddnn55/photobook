@@ -1,4 +1,5 @@
 const flatten = require('lodash.flatten');
+const superagent = require('superagent');
 
 const layOutPage = require('./lay_out_page');
 
@@ -60,3 +61,14 @@ const html = (title, images, options) => {
 
 // main
 document.querySelector('.chapter').innerHTML = 'hello from chapter.js!';
+
+document.querySelector('.chapter').innerHTML = JSON.stringify(window.CHAPTER_METADATA);
+
+// superagent.get(`/metadata`).end((err, res) => {
+//     if(err) {
+//         throw err;
+//     }
+//     else {
+//         document.querySelector('.chapter').innerHTML = res.text;
+//     }
+// });

@@ -2,8 +2,11 @@ const child_process = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
+const urlencode = require('urlencode');
 
 // const chapterHtml = require('./chapter_html');
+
+const template = fs.readFileSync(path.join(__dirname, 'renderer/index.html'), {encoding:'utf8'});
 
 // should be more rigorous lol
 const isImage = filename => filename !== '.DS_Store';
@@ -25,10 +28,13 @@ const getImagesMetadatas = imagePaths => Promise.all(
     metadataOrNull => metadataOrNull !== null
 ));
 
+let nextChapterId = 0;
+
 module.exports = (sourceDirectory, {app, port}, options) => {
     options = options || {};
 
     const chapterTitle = path.parse(sourceDirectory).name;
+    const chapterId = nextChapterId++;
 
     return new Promise((resolve, reject) => {
 
@@ -42,7 +48,7 @@ module.exports = (sourceDirectory, {app, port}, options) => {
             // const port = 3000;
             // const app = express();
 
-            app.get('/metadata', (req, res) => {
+            app.get(`/chapter/${chapterId}`, (req, res) => {
 
                 fs.readdir(sourceDirectory, (err, possibleImagePaths) => {
                     if(err) {
@@ -60,17 +66,22 @@ module.exports = (sourceDirectory, {app, port}, options) => {
                         .then(imageMetadatas => {
                             return imageMetadatas.map(
                                 (imageMetadata, i) => ({
-                                    metadata: imageMetadata,
+                                    metadata: {
+                                        width: imageMetadata.width,
+                                        height: imageMetadata.height
+                                    },
                                     filename: imageFilenames[i]
                                 })
                             );
                         })
                         .then(images => {
-                            res.send({
+                            const metadata = {
                                 title: chapterTitle,
                                 pageSize: options.pageSize.dimensions,
                                 images
-                            });
+                            };
+                            const html = template.replace('/*{{data}}*/', JSON.stringify(metadata));
+                            res.send(html);
                         }
                         //     images => chapterHtml(chapterTitle, images, {
                         //         pageSize: options.pageSize.dimensions,
@@ -95,7 +106,7 @@ module.exports = (sourceDirectory, {app, port}, options) => {
             //     // console.log('listening on port 3000!');
 
                 let args = [
-                    `http://0.0.0.0:${port}/`,
+                    `http://0.0.0.0:${port}/chapter/${chapterId}`,
                     outputFilePath
                 ];
                 if(options.pageSize) {
