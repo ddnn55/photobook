@@ -4,7 +4,7 @@ const superagent = require('superagent');
 const layOutPage = require('./lay_out_page');
 
 const renderPage = page => page.map((placedImage, i) => {
-    const imageUrl = `static/${placedImage.image.filename}`;
+    const imageUrl = `${CHAPTER_METADATA.chapterStaticRoute}/${placedImage.image.filename}`;
     return `
         <img class="photo" src="${imageUrl}"
             style="
@@ -14,6 +14,8 @@ const renderPage = page => page.map((placedImage, i) => {
                 height: ${placedImage.placement.h}mm;
             "
         />
+        ${imageUrl}<br/>
+        ${window.location}<br/>
     `;
 }).join('\n');
 

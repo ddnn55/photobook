@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 const urlencode = require('urlencode');
+const express = require('express');
 
 // const chapterHtml = require('./chapter_html');
 
@@ -45,10 +46,13 @@ module.exports = (sourceDirectory, {app, port}, options) => {
         console.log(outputFilePath);
 
         if (!options.dryRun) {
-            // const port = 3000;
-            // const app = express();
+            
+            const chapterRoute = `/chapter/${chapterId}`;
+            const chapterStaticRoute = `${chapterRoute}/static`;
 
-            app.get(`/chapter/${chapterId}`, (req, res) => {
+            console.log({chapterRoute, chapterStaticRoute});
+
+            app.get(chapterRoute, (req, res) => {
 
                 fs.readdir(sourceDirectory, (err, possibleImagePaths) => {
                     if(err) {
@@ -78,7 +82,8 @@ module.exports = (sourceDirectory, {app, port}, options) => {
                             const metadata = {
                                 title: chapterTitle,
                                 pageSize: options.pageSize.dimensions,
-                                images
+                                images,
+                                chapterStaticRoute
                             };
                             const html = template.replace('/*{{data}}*/', JSON.stringify(metadata));
                             res.send(html);
@@ -100,6 +105,10 @@ module.exports = (sourceDirectory, {app, port}, options) => {
 
             });
             
+            app.use(
+                chapterStaticRoute,
+                express.static(sourceDirectory)
+            );
 
             // const httpServer = require('http').createServer(app);
             // httpServer.listen({ port }, () => {

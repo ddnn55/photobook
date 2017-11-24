@@ -25,7 +25,6 @@ module.exports = ({bookSourceDirectory}) => new Promise((resolve, reject) => {
     app.use('/renderer', webpackMiddleware(compiler));
 
     app.use('/renderer', express.static(path.join(__dirname, 'renderer')));
-    app.use('/static', express.static(bookSourceDirectory));
 
     app.listen(port, () => {
         resolve({
