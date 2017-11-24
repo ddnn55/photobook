@@ -62,7 +62,13 @@ const html = (title, images, options) => {
 // main
 
 document.querySelector('.chapter').innerHTML = `
-    <div class="chapter-title">${CHAPTER_METADATA.title}</div>
+    ${html(
+        CHAPTER_METADATA.title,
+        CHAPTER_METADATA.images,
+        {
+            pageSize: CHAPTER_METADATA.pageSize
+        }
+    )}
     <pre class="debug">${JSON.stringify(CHAPTER_METADATA, null, 2)}</pre>
 `;
 
