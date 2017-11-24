@@ -10,6 +10,12 @@ body {
     padding: 0;
 }
 
+.chapter-title {
+    font-size: 5em;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
 .photo {
     position: absolute;
     margin: 0;

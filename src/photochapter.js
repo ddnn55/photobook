@@ -29,11 +29,13 @@ const getImagesMetadatas = imagePaths => Promise.all(
 module.exports = (sourceDirectory, options) => {
     options = options || {};
 
+    const chapterTitle = path.parse(sourceDirectory).name;
+
     return new Promise((resolve, reject) => {
 
         const outputFilePath = path.join(
             process.cwd(),
-            path.parse(sourceDirectory).name + '.pdf'
+            chapterTitle + '.pdf'
         );
         console.log(outputFilePath);
 
@@ -64,7 +66,7 @@ module.exports = (sourceDirectory, options) => {
                             );
                         })
                         .then(
-                            images => chapterHtml(images, {
+                            images => chapterHtml(chapterTitle, images, {
                                 pageSize: options.pageSize.dimensions,
                                 targetPhotosPerPage: options.targetPhotosPerPage
                             })

@@ -30,7 +30,7 @@ const renderPage = page => page.map((placedImage, i) => {
     `;
 }).join('\n');
 
-module.exports = (images, options) => {
+module.exports = (title, images, options) => {
     // console.error(options.pageSize);
 
     const layoutWidth = options.pageSize[0];
@@ -62,6 +62,7 @@ module.exports = (images, options) => {
         getCss.then(css => {
             resolve(`
                 <style>${css}</style>
+                <div class="chapter-title">${title}</div>
                 ${pages.map(page => `
                     <div class="page" style="
                         width: ${layoutWidth}mm;
