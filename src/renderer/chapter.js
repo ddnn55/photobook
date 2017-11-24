@@ -60,9 +60,11 @@ const html = (title, images, options) => {
 };
 
 // main
-document.querySelector('.chapter').innerHTML = 'hello from chapter.js!';
 
-document.querySelector('.chapter').innerHTML = JSON.stringify(window.CHAPTER_METADATA);
+document.querySelector('.chapter').innerHTML = `
+    <div class="chapter-title">${CHAPTER_METADATA.title}</div>
+    <pre class="debug">${JSON.stringify(CHAPTER_METADATA, null, 2)}</pre>
+`;
 
 // superagent.get(`/metadata`).end((err, res) => {
 //     if(err) {
