@@ -1,10 +1,9 @@
 const child_process = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const express = require('express');
 const sharp = require('sharp');
 
-const chapterHtml = require('./chapter_html');
+// const chapterHtml = require('./chapter_html');
 
 // should be more rigorous lol
 const isImage = filename => filename !== '.DS_Store';
@@ -26,7 +25,7 @@ const getImagesMetadatas = imagePaths => Promise.all(
     metadataOrNull => metadataOrNull !== null
 ));
 
-module.exports = (sourceDirectory, options) => {
+module.exports = (sourceDirectory, {app, port}, options) => {
     options = options || {};
 
     const chapterTitle = path.parse(sourceDirectory).name;
@@ -40,9 +39,10 @@ module.exports = (sourceDirectory, options) => {
         console.log(outputFilePath);
 
         if (!options.dryRun) {
-            const port = 3000;
-            const app = express();
-            app.get('/', (req, res) => {
+            // const port = 3000;
+            // const app = express();
+
+            app.get('/metadata', (req, res) => {
 
                 fs.readdir(sourceDirectory, (err, possibleImagePaths) => {
                     if(err) {
@@ -65,15 +65,22 @@ module.exports = (sourceDirectory, options) => {
                                 })
                             );
                         })
-                        .then(
-                            images => chapterHtml(chapterTitle, images, {
+                        .then(images => {
+                            res.send({
+                                title: chapterTitle,
                                 pageSize: options.pageSize.dimensions,
-                                targetPhotosPerPage: options.targetPhotosPerPage
-                            })
-                        )
-                        .then(html => {
-                            res.send(html);
-                        }).catch(err => {
+                                images
+                            });
+                        }
+                        //     images => chapterHtml(chapterTitle, images, {
+                        //         pageSize: options.pageSize.dimensions,
+                        //         targetPhotosPerPage: options.targetPhotosPerPage
+                        //     })
+                        // )
+                        // .then(html => {
+                        //     res.send(html);
+                        // }
+                        ).catch(err => {
                             reject(err);
                         });
                         
@@ -81,11 +88,11 @@ module.exports = (sourceDirectory, options) => {
                 });
 
             });
-            app.use('/static', express.static(sourceDirectory));
+            
 
-            const httpServer = require('http').createServer(app);
-            httpServer.listen({ port }, () => {
-                // console.log('listening on port 3000!');
+            // const httpServer = require('http').createServer(app);
+            // httpServer.listen({ port }, () => {
+            //     // console.log('listening on port 3000!');
 
                 let args = [
                     `http://0.0.0.0:${port}/`,
@@ -112,11 +119,11 @@ module.exports = (sourceDirectory, options) => {
 
                 electronPdf.on('close', (code) => {
                     // console.log(`child process exited with code ${code}`);
-                    httpServer.close();
+                    // httpServer.close();
                     resolve(outputFilePath);
                 });
 
-            });
+            // });
         }
         else {
             resolve();

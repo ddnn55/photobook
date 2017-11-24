@@ -1,20 +1,6 @@
-const fs = require('fs');
-const path = require('path');
 const flatten = require('lodash.flatten');
 
 const layOutPage = require('./lay_out_page');
-
-const getCss = new Promise((resolve, reject) => {
-    fs.readFile(path.join(__dirname, 'styles.css'), { encoding: 'utf8' }, (err, data) => {
-        if (err) {
-            reject('Could not read styles.css');
-        }
-        else {
-            // console.error('got styles.css');
-            resolve(data);
-        }
-    });
-});
 
 const renderPage = page => page.map((placedImage, i) => {
     const imageUrl = `static/${placedImage.image.filename}`;
@@ -30,7 +16,7 @@ const renderPage = page => page.map((placedImage, i) => {
     `;
 }).join('\n');
 
-module.exports = (title, images, options) => {
+const html = (title, images, options) => {
     // console.error(options.pageSize);
 
     const layoutWidth = options.pageSize[0];
@@ -58,23 +44,19 @@ module.exports = (title, images, options) => {
 
     // console.error('after layOutPage', placedImages);
 
-    return new Promise((resolve, reject) => {
-        getCss.then(css => {
-            resolve(`
-                <style>${css}</style>
-                <div class="chapter-title">${title}</div>
-                ${pages.map(page => `
-                    <div class="page" style="
-                        width: ${layoutWidth}mm;
-                        height: ${layoutHeight}mm;
-                    ">
-                        ${renderPage(page)}
-                    </div>
-                `)}
-            `);
-        }).catch(err => {
-            reject(err);
-        });
-    });
+    return `
+        <div class="chapter-title">${title}</div>
+        ${pages.map(page => `
+            <div class="page" style="
+                width: ${layoutWidth}mm;
+                height: ${layoutHeight}mm;
+            ">
+                ${renderPage(page)}
+            </div>
+        `)}
+    `;
 
 };
+
+// main
+document.querySelector('.chapter').innerHTML = 'hello from chapter.js!';

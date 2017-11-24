@@ -2,9 +2,10 @@ const fs = require('fs');
 const path = require('path');
 var paperSize = require('paper-size');
 
+const serveRenderer = require('./serve_renderer');
 const photochapter = require('./photochapter');
 
-const makeChapterIfDirectory = (chapterDirFullPath, options) => {
+const makeChapterIfDirectory = (chapterDirFullPath, server, options) => {
     return new Promise((resolve, reject) => {
         fs.lstat(chapterDirFullPath, (err, stats) => {
             
@@ -14,7 +15,7 @@ const makeChapterIfDirectory = (chapterDirFullPath, options) => {
             else {
                 if(stats.isDirectory()) {
                     // console.log('calling photochapter with ', chapterDirFullPath);
-                    photochapter(chapterDirFullPath, options).then(() => {
+                    photochapter(chapterDirFullPath, server, options).then(() => {
                         // console.error('photochapter() resolved');
                         resolve();
                     }).catch(err => {
@@ -46,37 +47,46 @@ module.exports = function (sourceDirectory, options) {
 
     console.error(`Page Size (${options.pageSize.name}): ${options.pageSize.dimensions[0]}mm x ${options.pageSize.dimensions[1]}mm`);
 
+
     return new Promise((resolve, reject) => {
 
-        fs.readdir(sourceDirectory, (err, chapterDirs) => {
-            if (err) {
-                reject(`Could not list files in directory ${sourceDirectory}`);
-            }
-            else {
-                (async function makeChapters() {
-                    // console.log({chapterDirs});
-                    for (const chapterDir of chapterDirs) {
-                        try {
-                            const chapterDirFullPath = path.join(sourceDirectory, chapterDir);
-                            
-                            await makeChapterIfDirectory(chapterDirFullPath, options);
-
+        serveRenderer({bookSourceDirectory: sourceDirectory}).then(server => {
+            
+            fs.readdir(sourceDirectory, (err, chapterDirs) => {
+                if (err) {
+                    reject(`Could not list files in directory ${sourceDirectory}`);
+                }
+                else {
+                    (async function makeChapters() {
+                        // console.log({chapterDirs});
+                        for (const chapterDir of chapterDirs) {
+                            try {
+                                const chapterDirFullPath = path.join(sourceDirectory, chapterDir);
+                                
+                                await makeChapterIfDirectory(chapterDirFullPath, server, options);
+    
+                            }
+                            catch(e) {
+                                reject(`Something went wrong while trying to make chapter for ${chapterDir}`);
+                            }
                         }
-                        catch(e) {
-                            reject(`Something went wrong while trying to make chapter for ${chapterDir}`);
-                        }
-                    }
-                    console.error('after the loop');
-                })().then(() => {
-                    console.error('there');
-                    resolve();
-                })
-                .catch(err => {
-                    console.error('here', err);
-                });
-
-            }
+                        console.error('after the loop');
+                    })().then(() => {
+                        console.error('there');
+                        resolve();
+                    })
+                    .catch(err => {
+                        console.error('here', err);
+                    });
+    
+                }
+            });
+    
+        })
+        .catch(err => {
+            reject(err);
         });
-
     });
+
+
 };

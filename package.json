@@ -10,6 +10,7 @@
   "author": "David Stolarsky",
   "license": "MIT",
   "dependencies": {
+    "babel-preset-env": "^1.6.1",
     "electron-pdf": "^1.2.2",
     "express": "^4.16.2",
     "lodash.flatten": "^4.4.0",
@@ -18,6 +19,8 @@
     "paper-size": "^1.1.0",
     "rectangle-bin-pack": "git+https://github.com/gimlids/rectangle-bin-pack#b4d4c6a2766eea965eff8bbf3a878dc802ff453c",
     "sharp": "^0.18.4",
+    "webpack": "^3.8.1",
+    "webpack-dev-middleware": "^1.12.1",
     "yargs": "^10.0.3"
   }
 }
