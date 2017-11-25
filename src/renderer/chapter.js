@@ -4,6 +4,9 @@ const convert = require('css-unit-converter');
 
 const layOutPage = require('./lay_out_page');
 
+const layoutWidth = CHAPTER_METADATA.pageSize[0];
+const margins = layoutWidth * 0.04;
+
 const renderPage = page => page.map((placedImage, i) => {
     const imageUrl = `${CHAPTER_METADATA.chapterStaticRoute}/${placedImage.image.filename}`;
     return `
@@ -18,14 +21,14 @@ const renderPage = page => page.map((placedImage, i) => {
     `;
 }).join('\n');
 
-const html = (titleHeight, images, options) => {
+const html = (titleHeight, images) => {
     // console.error(options.pageSize);
 
-    const layoutWidth = options.pageSize[0];
+    
     // fudge to keep pages from bleeding onto next page and
     // gradually offsetting everything more and more with
     // each new page :(
-    const layoutHeight = options.pageSize[1] * 0.98;
+    const layoutHeight = CHAPTER_METADATA.pageSize[1] * 0.98;
     const firstPagePhotoLayoutHeight = layoutHeight - titleHeight;
 
     const pages = [];
@@ -38,7 +41,7 @@ const html = (titleHeight, images, options) => {
                 first === 0 ? firstPagePhotoLayoutHeight : layoutHeight
             ],
             {
-                margins: layoutWidth * 0.04
+                margins
             }
         );
         pages.push(placed);
@@ -68,6 +71,7 @@ const html = (titleHeight, images, options) => {
 // document.querySelector('body').setAttribute('class', 'debug');
 
 document.querySelector('.chapter .title').style.width = `${CHAPTER_METADATA.pageSize[0]}mm`;
+document.querySelector('.chapter .title').style.padding = `${margins}mm`;
 document.querySelector('.chapter .title').innerHTML = CHAPTER_METADATA.title;
 
 const titleRect = document.querySelector('.chapter .title').getBoundingClientRect();
@@ -79,8 +83,5 @@ const titleHeight = convert(titleRect.height, 'px', 'mm');
 
 document.querySelector('.chapter .photos').innerHTML = html(
     titleHeight,
-    CHAPTER_METADATA.images,
-    {
-        pageSize: CHAPTER_METADATA.pageSize
-    }
+    CHAPTER_METADATA.images
 );
