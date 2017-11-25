@@ -67,21 +67,29 @@ const html = (titleHeight, images) => {
 };
 
 // main
+try {
 
-// document.querySelector('body').setAttribute('class', 'debug');
+    // document.querySelector('body').setAttribute('class', 'debug');
 
-document.querySelector('.chapter .title').style.width = `${CHAPTER_METADATA.pageSize[0]}mm`;
-document.querySelector('.chapter .title').style.padding = `${margins}mm`;
-document.querySelector('.chapter .title').innerHTML = CHAPTER_METADATA.title;
+    document.querySelector('.chapter .title').style.width = `${CHAPTER_METADATA.pageSize[0]}mm`;
+    document.querySelector('.chapter .title').style.padding = `${margins}mm`;
+    document.querySelector('.chapter .title').innerHTML = CHAPTER_METADATA.title;
 
-const titleRect = document.querySelector('.chapter .title').getBoundingClientRect();
-const titleHeight = convert(titleRect.height, 'px', 'mm');
+    const titleRect = document.querySelector('.chapter .title').getBoundingClientRect();
+    const titleHeight = convert(titleRect.height, 'px', 'mm');
 
-// document.querySelector('.console').innerHTML = JSON.stringify({
-//     titleRect, titleHeight
-// });
+    // document.querySelector('.console').innerHTML = JSON.stringify({
+    //     titleRect, titleHeight
+    // });
 
-document.querySelector('.chapter .photos').innerHTML = html(
-    titleHeight,
-    CHAPTER_METADATA.images
-);
+    document.querySelector('.chapter .photos').innerHTML = html(
+        titleHeight,
+        CHAPTER_METADATA.images
+    );
+
+}
+catch(e) {    
+    document.querySelector('.console').innerHTML = 'exception: ' + e.message;
+}
+
+setTimeout(() => document.body.dispatchEvent(new Event('view-ready')), 5000);

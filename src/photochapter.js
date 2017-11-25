@@ -116,7 +116,8 @@ module.exports = (sourceDirectory, {app, port}, options) => {
 
                 let args = [
                     `http://0.0.0.0:${port}/chapter/${chapterId}`,
-                    outputFilePath
+                    outputFilePath,
+                    '--waitForJSEvent'
                 ];
                 if(options.pageSize) {
                     args = args.concat([
@@ -130,7 +131,7 @@ module.exports = (sourceDirectory, {app, port}, options) => {
                 );
 
                 electronPdf.stdout.on('data', (data) => {
-                    // console.log(`stdout: ${data}`);
+                    console.log(`stdout: ${data}`);
                 });
 
                 electronPdf.stderr.on('data', (data) => {
