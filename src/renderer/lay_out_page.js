@@ -78,8 +78,8 @@ const verticallyCenter = (pageLayout, pageSize) => {
     pageLayout.bottom += offset;
 };
 
-module.exports = (images, pageSize, maxTargetPhotosPerRow = 3) => {
-    const pageLayout = rowPackStrategy(images, pageSize, maxTargetPhotosPerRow, pageSize[0] * 0.04);
+module.exports = (images, pageSize, {maxTargetPhotosPerRow = 3, margins = 0}) => {
+    const pageLayout = rowPackStrategy(images, pageSize, maxTargetPhotosPerRow, margins);
     if(/*pageLayout.placed.length === images.length &&*/ pageLayout.bottom < 0.5 * pageSize[1] && maxTargetPhotosPerRow > 1) {
         return module.exports(images, pageSize, maxTargetPhotosPerRow - 1)
     }

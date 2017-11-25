@@ -9,11 +9,23 @@ body {
     margin: 0;
     padding: 0;
 }
+.debug .page {
+    border: 1px solid red;
+}
 
-.chapter-title {
+.page:first-of-type {
+    page-break-before: unset;
+}
+
+.chapter .title {
     font-size: 5em;
     font-family: sans-serif;
     font-weight: bold;
+    margin: 0 0 0 0;
+}
+
+.chapter .photos {
+    margin: 0 0 0 0;
 }
 
 .photo {

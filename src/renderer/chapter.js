@@ -1,5 +1,6 @@
 const flatten = require('lodash.flatten');
 const superagent = require('superagent');
+const convert = require('css-unit-converter');
 
 const layOutPage = require('./lay_out_page');
 
@@ -14,12 +15,10 @@ const renderPage = page => page.map((placedImage, i) => {
                 height: ${placedImage.placement.h}mm;
             "
         />
-        ${imageUrl}<br/>
-        ${window.location}<br/>
     `;
 }).join('\n');
 
-const html = (title, images, options) => {
+const html = (titleHeight, images, options) => {
     // console.error(options.pageSize);
 
     const layoutWidth = options.pageSize[0];
@@ -27,6 +26,7 @@ const html = (title, images, options) => {
     // gradually offsetting everything more and more with
     // each new page :(
     const layoutHeight = options.pageSize[1] * 0.98;
+    const firstPagePhotoLayoutHeight = layoutHeight - titleHeight;
 
     const pages = [];
 
@@ -35,8 +35,11 @@ const html = (title, images, options) => {
             images.slice(first),
             [
                 layoutWidth,
-                layoutHeight
-            ]
+                first === 0 ? firstPagePhotoLayoutHeight : layoutHeight
+            ],
+            {
+                margins: layoutWidth * 0.04
+            }
         );
         pages.push(placed);
     }
@@ -48,11 +51,10 @@ const html = (title, images, options) => {
     // console.error('after layOutPage', placedImages);
 
     return `
-        <div class="chapter-title">${title}</div>
-        ${pages.map(page => `
+        ${pages.map((page, p) => `
             <div class="page" style="
                 width: ${layoutWidth}mm;
-                height: ${layoutHeight}mm;
+                height: ${p === 0 ? firstPagePhotoLayoutHeight : layoutHeight}mm;
             ">
                 ${renderPage(page)}
             </div>
@@ -63,22 +65,22 @@ const html = (title, images, options) => {
 
 // main
 
-document.querySelector('.chapter').innerHTML = `
-    ${html(
-        CHAPTER_METADATA.title,
-        CHAPTER_METADATA.images,
-        {
-            pageSize: CHAPTER_METADATA.pageSize
-        }
-    )}
-    <pre class="debug">${JSON.stringify(CHAPTER_METADATA, null, 2)}</pre>
-`;
+// document.querySelector('body').setAttribute('class', 'debug');
 
-// superagent.get(`/metadata`).end((err, res) => {
-//     if(err) {
-//         throw err;
-//     }
-//     else {
-//         document.querySelector('.chapter').innerHTML = res.text;
-//     }
+document.querySelector('.chapter .title').style.width = `${CHAPTER_METADATA.pageSize[0]}mm`;
+document.querySelector('.chapter .title').innerHTML = CHAPTER_METADATA.title;
+
+const titleRect = document.querySelector('.chapter .title').getBoundingClientRect();
+const titleHeight = convert(titleRect.height, 'px', 'mm');
+
+// document.querySelector('.console').innerHTML = JSON.stringify({
+//     titleRect, titleHeight
 // });
+
+document.querySelector('.chapter .photos').innerHTML = html(
+    titleHeight,
+    CHAPTER_METADATA.images,
+    {
+        pageSize: CHAPTER_METADATA.pageSize
+    }
+);
