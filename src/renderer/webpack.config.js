@@ -23,6 +23,7 @@ module.exports = {
         extensions: [".js"]
     },
     resolveLoader: {
+        // why is this necessary? is babel-loader installed weirdly?
         modules: [path.join(__dirname, "../../node_modules")],
         extensions: [".js"]
     }
