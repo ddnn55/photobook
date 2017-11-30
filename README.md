@@ -1,6 +1,11 @@
 ## Installation
 
-TODO
+```
+git clone https://github.com/gimlids/photobook
+cd photobook
+yarn
+yarn link
+```
 
 ## Usage
 
